@@ -572,5 +572,3 @@ If I had to pick five that are most likely to catch a recruiter's eye, I'd build
 3. 🕳️ Black Hole Desk
 4. 🌳 Air Bonsai
 5. ⏳ Time Distortion Camera
-
-These feel more like interactive installations than classroom projects, making them memorable on GitHub, LinkedIn, and during interviews.
