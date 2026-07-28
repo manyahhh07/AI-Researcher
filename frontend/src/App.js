@@ -24,7 +24,24 @@ export default function App() {
       {/* Top nav */}
       <nav className="app-nav">
         <a className="nav-brand" href="/" onClick={e => { e.preventDefault(); setSelectedPaper(null); }}>
-          <div className="nav-brand-mark">🧠</div>
+          <div className="nav-brand-mark">
+<svg
+  width="16"
+  height="16"
+  viewBox="0 0 40 40"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M10 8 L10 32 M10 8 L24 8 Q34 8 34 18 Q34 28 24 28 L10 28"
+    stroke="white"
+    strokeWidth="4"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    fill="none"
+  />
+</svg> 
+</div>         
           <div>
             <div className="nav-brand-name">PaperSense AI</div>
           </div>

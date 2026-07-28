@@ -222,15 +222,35 @@ def summarize_paper(req: SummarizeRequest):
         raise HTTPException(404, "Paper not found.")
 
     instructions = {
-        "concise":  "Summarize the paper in 3-5 bullet points: objective, methods, key findings, conclusions.",
-        "detailed": "Write a structured summary with sections: Overview, Methodology, Key Findings, Limitations, Future Work.",
-        "eli5":     "Explain this research paper as if the reader is a 16-year-old. Use simple language, no jargon, real-world analogies.",
+        "concise": (
+            "Your ONLY job: output exactly 5 bullet points using this format:\n"
+            "• Objective: ...\n• Methods: ...\n• Key Findings: ...\n• Conclusions: ...\n• Implications: ...\n"
+            "No intro sentence. No headers. No extra text. Just 5 bullets starting with •"
+        ),
+        "detailed": (
+            "Your ONLY job: write a structured academic summary using EXACTLY these section headers:\n\n"
+            "## Overview\n(2-3 sentences)\n\n"
+            "## Methodology\n(2-3 sentences)\n\n"
+            "## Key Findings\n(3-4 sentences)\n\n"
+            "## Limitations\n(1-2 sentences)\n\n"
+            "## Future Work\n(1-2 sentences)\n\n"
+            "Use the exact headers above. Write in formal academic prose."
+        ),
+        "eli5": (
+            "Your ONLY job: explain this paper like the reader is a curious 15-year-old who has never read research.\n"
+            "Rules:\n"
+            "- NO bullet points\n"
+            "- NO jargon or technical terms (if you must use one, explain it immediately)\n"
+            "- Use everyday analogies and comparisons\n"
+            "- Write 3 short paragraphs: what they studied, how they did it, what they found\n"
+            "- Sound like a friend explaining, not a textbook"
+        ),
     }
     instruction = instructions.get(req.style, instructions["concise"])
 
     summary = call_groq(
-        "You are a research paper summarization expert.",
-        f"TASK: {instruction}\n\nPAPER TEXT (first 6000 chars):\n{paper['text'][:6000]}",
+        f"You are a research paper summarization expert. Follow the formatting instructions EXACTLY. Style requested: {req.style.upper()}",
+        f"FORMATTING INSTRUCTIONS:\n{instruction}\n\n---\nPAPER TEXT:\n{paper['text'][:6000]}",
         max_tokens=1100,
     )
     return {"summary": summary, "style": req.style}
