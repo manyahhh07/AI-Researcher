@@ -43,7 +43,7 @@ export default function App() {
 </svg> 
 </div>         
           <div>
-            <div className="nav-brand-name">PaperSense AI</div>
+            <div className="nav-brand-name">Ponder</div>
           </div>
         </a>
         <div className="nav-divider" />
