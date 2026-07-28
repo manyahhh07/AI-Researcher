@@ -4,6 +4,8 @@ FREE AI powered by Groq (llama-3.3-70b-versatile)
 No credit card required. Get key at: https://console.groq.com
 """
 
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn, os, re, hashlib, time

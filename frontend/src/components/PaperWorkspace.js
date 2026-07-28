@@ -2,31 +2,35 @@ import React, { useState, useRef, useEffect } from "react";
 import { askQuestion, summarizePaper, getEquations, getCitations, searchPaper } from "../utils/api";
 
 const TABS = [
-  { id: "qa",        icon: "💬", label: "Ask AI"    },
-  { id: "summary",   icon: "📝", label: "Summarize" },
-  { id: "equations", icon: "∑",  label: "Equations" },
-  { id: "citations", icon: "🔗", label: "Citations" },
-  { id: "search",    icon: "🔍", label: "Search"    },
+  { id: "qa",        label: "Ask AI"     },
+  { id: "summary",   label: "Summarize"  },
+  { id: "equations", label: "Equations"  },
+  { id: "citations", label: "Citations"  },
+  { id: "search",    label: "Search"     },
 ];
 
-function LoadingDots() {
+function TypingIndicator() {
   return (
-    <span className="loading-dots">
-      <span className="loading-dot" /><span className="loading-dot" /><span className="loading-dot" />
-    </span>
+    <div className="qa-typing">
+      <div className="qa-typing-dot" />
+      <div className="qa-typing-dot" />
+      <div className="qa-typing-dot" />
+    </div>
   );
 }
 
-// ── Q&A Tab ──────────────────────────────────────────────
+/* ── Q&A ─────────────────────────────────────────────────── */
 function QAPanel({ paperId }) {
   const [messages, setMessages] = useState([
-    { role: "ai", text: "Hi! I've read this paper. Ask me anything — methodology, findings, limitations, or specific sections.", sources: [] }
+    { role: "ai", text: "I've read this paper. Ask me anything — methodology, findings, specific claims, or anything you're curious about.", sources: [] }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const send = async () => {
     const q = input.trim();
@@ -38,24 +42,28 @@ function QAPanel({ paperId }) {
       const res = await askQuestion(paperId, q);
       setMessages(prev => [...prev, { role: "ai", text: res.data.answer, sources: res.data.sources }]);
     } catch {
-      setMessages(prev => [...prev, { role: "ai", text: "⚠️ Could not reach the backend. Make sure FastAPI is running on port 8000.", sources: [] }]);
-    } finally { setLoading(false); }
+      setMessages(prev => [...prev, { role: "ai", text: "Could not reach the backend. Make sure FastAPI is running on port 8000.", sources: [] }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="panel-card">
+    <div className="qa-panel">
       <div className="qa-messages">
         {messages.map((m, i) => (
-          <div key={i} className={`message ${m.role}`}>
-            <div className="msg-avatar">{m.role === "user" ? "👤" : "🤖"}</div>
-            <div>
-              <div className="msg-bubble">{m.text}</div>
+          <div key={i} className={`qa-message ${m.role}`}>
+            <div className="qa-avatar">
+              {m.role === "user" ? "U" : "AI"}
+            </div>
+            <div className="qa-bubble-wrap">
+              <div className="qa-bubble">{m.text}</div>
               {m.sources?.length > 0 && (
-                <div className="msg-sources">
-                  <div className="msg-source-label">Context used</div>
+                <div className="qa-sources">
+                  <div className="qa-sources-label">Sources used</div>
                   {m.sources.slice(0, 2).map((s, j) => (
-                    <div key={j} className="source-snippet">
-                      Chunk #{s.chunk_index} · score {s.score} — {s.text.slice(0, 120)}…
+                    <div key={j} className="qa-source-item">
+                      Chunk {s.chunk_index} · {s.text.slice(0, 100)}…
                     </div>
                   ))}
                 </div>
@@ -64,31 +72,34 @@ function QAPanel({ paperId }) {
           </div>
         ))}
         {loading && (
-          <div className="message ai">
-            <div className="msg-avatar">🤖</div>
-            <div className="msg-bubble"><LoadingDots /></div>
+          <div className="qa-message ai">
+            <div className="qa-avatar">AI</div>
+            <div className="qa-bubble-wrap">
+              <div className="qa-bubble"><TypingIndicator /></div>
+            </div>
           </div>
         )}
         <div ref={bottomRef} />
       </div>
-      <div className="qa-input-row">
+
+      <div className="qa-input-area">
         <input
           className="qa-input"
-          placeholder="e.g. What is the main contribution of this paper?"
+          placeholder="Ask a question about this paper…"
           value={input}
           onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && send()}
+          onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
           disabled={loading}
         />
-        <button className="qa-submit" onClick={send} disabled={loading || !input.trim()}>
-          {loading ? "…" : "Ask →"}
+        <button className="qa-send" onClick={send} disabled={loading || !input.trim()}>
+          Send
         </button>
       </div>
     </div>
   );
 }
 
-// ── Summary Tab ───────────────────────────────────────────
+/* ── Summary ─────────────────────────────────────────────── */
 function SummaryPanel({ paperId, quickSummary }) {
   const [style, setStyle] = useState("concise");
   const [summary, setSummary] = useState("");
@@ -100,42 +111,42 @@ function SummaryPanel({ paperId, quickSummary }) {
     try {
       const res = await summarizePaper(paperId, style);
       setSummary(res.data.summary);
-    } catch { setSummary("⚠️ Backend unavailable."); }
-    finally { setLoading(false); }
+    } catch {
+      setSummary("Could not reach the backend.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const styleLabels = { concise: "Concise", detailed: "Detailed", eli5: "ELI5" };
+
   return (
-    <div className="panel-card">
-      <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)", marginBottom: 10, textTransform: "uppercase", letterSpacing: "1px" }}>Summary Style</div>
-        <div className="style-buttons">
-          {[
-            { id: "concise",  label: "⚡ Concise",  desc: "5 bullet points" },
-            { id: "detailed", label: "📋 Detailed",  desc: "Structured sections" },
-            { id: "eli5",     label: "🧒 ELI5",      desc: "Plain language" },
-          ].map(s => (
-            <button key={s.id} className={`style-btn ${style === s.id ? "active" : ""}`} onClick={() => setStyle(s.id)}>
-              {s.label} <span style={{ opacity: 0.65, fontWeight: 400 }}>· {s.desc}</span>
-            </button>
-          ))}
-        </div>
-        <button className="summary-action-btn" onClick={generate} disabled={loading}>
-          {loading ? <LoadingDots /> : "Generate Summary"}
-        </button>
+    <div className="panel-page">
+      <h2 className="panel-heading">Summarize</h2>
+      <p className="panel-sub">Choose a style and generate a summary of this paper.</p>
+
+      <div className="style-picker">
+        {["concise", "detailed", "eli5"].map(s => (
+          <button key={s} className={`style-option ${style === s ? "active" : ""}`} onClick={() => setStyle(s)}>
+            {styleLabels[s]}
+          </button>
+        ))}
       </div>
+
+      <button className="generate-btn" onClick={generate} disabled={loading}>
+        {loading ? "Generating…" : "Generate Summary"}
+      </button>
 
       {!summary && quickSummary && (
         <div>
-          <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px", color: "var(--text-muted)", marginBottom: 8 }}>Auto-detected on upload</div>
+          <div className="summary-result-label">Auto-detected on upload</div>
           <div className="summary-result">{quickSummary}</div>
         </div>
       )}
 
       {summary && (
         <div>
-          <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px", color: "var(--maroon-light)", marginBottom: 8 }}>
-            {style === "concise" ? "⚡ Concise" : style === "detailed" ? "📋 Detailed" : "🧒 ELI5"} Summary
-          </div>
+          <div className="summary-result-label">{styleLabels[style]} summary</div>
           <div className="summary-result">{summary}</div>
         </div>
       )}
@@ -143,45 +154,39 @@ function SummaryPanel({ paperId, quickSummary }) {
   );
 }
 
-// ── Equations Tab ─────────────────────────────────────────
+/* ── Equations ───────────────────────────────────────────── */
 function EquationsPanel({ paperId }) {
   const [equations, setEquations] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const load = async () => {
-    setLoading(true);
-    try {
-      const res = await getEquations(paperId);
-      setEquations(res.data.equations);
-    } catch { setEquations([]); }
-    finally { setLoading(false); }
-  };
-
-  useEffect(() => { load(); }, [paperId]);
-
-  if (loading) return <div className="panel-card"><div className="empty-state"><LoadingDots /></div></div>;
-  if (!equations) return null;
+  useEffect(() => {
+    getEquations(paperId)
+      .then(r => setEquations(r.data.equations))
+      .catch(() => setEquations([]))
+      .finally(() => setLoading(false));
+  }, [paperId]);
 
   return (
-    <div className="panel-card">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-        <div>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: 18, color: "var(--maroon)" }}>Equations & Expressions</div>
-          <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>{equations.length} found</div>
-        </div>
-        <button onClick={load} className="style-btn">↺ Refresh</button>
-      </div>
-      {equations.length === 0 ? (
+    <div className="panel-page">
+      <h2 className="panel-heading">Equations</h2>
+      <p className="panel-sub">{equations ? `${equations.length} expressions detected` : "Scanning…"}</p>
+
+      {loading && <div className="loading-row">Extracting equations…</div>}
+
+      {!loading && equations?.length === 0 && (
         <div className="empty-state">
           <div className="empty-state-icon">∑</div>
-          <div className="empty-state-text">No equations detected.<br />This paper may use plain-text math or be scanned.</div>
+          <div className="empty-state-title">No equations found</div>
+          <div className="empty-state-text">This paper may use plain-text math or be a scanned image PDF.</div>
         </div>
-      ) : (
-        <div className="eq-list">
+      )}
+
+      {!loading && equations?.length > 0 && (
+        <div className="eq-grid">
           {equations.map((eq, i) => (
             <div key={i} className="eq-item">
-              <div className="eq-badge">EQ {String(i + 1).padStart(2, "0")}</div>
-              <div>{eq}</div>
+              <div className="eq-label">Equation {String(i + 1).padStart(2, "0")}</div>
+              <div className="eq-text">{eq}</div>
             </div>
           ))}
         </div>
@@ -190,51 +195,49 @@ function EquationsPanel({ paperId }) {
   );
 }
 
-// ── Citations Tab ─────────────────────────────────────────
+/* ── Citations ───────────────────────────────────────────── */
 function CitationsPanel({ paperId }) {
   const [citations, setCitations] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     getCitations(paperId)
       .then(r => setCitations(r.data.citations))
       .catch(() => setCitations([]))
       .finally(() => setLoading(false));
   }, [paperId]);
 
-  if (loading) return <div className="panel-card"><div className="empty-state"><LoadingDots /></div></div>;
-  if (!citations) return null;
-
-  const filtered = filter === "all" ? citations : citations.filter(c => c.type === filter);
+  const filtered = filter === "all" ? citations : citations?.filter(c => c.type === filter);
 
   return (
-    <div className="panel-card">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-        <div>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: 18, color: "var(--maroon)" }}>Citations & References</div>
-          <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>{citations.length} total</div>
-        </div>
-        <div className="style-buttons" style={{ margin: 0 }}>
-          {["all", "inline", "reference"].map(f => (
-            <button key={f} className={`style-btn ${filter === f ? "active" : ""}`} onClick={() => setFilter(f)}>
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
-        </div>
+    <div className="panel-page">
+      <h2 className="panel-heading">Citations</h2>
+      <p className="panel-sub">{citations ? `${citations.length} citations extracted` : "Scanning…"}</p>
+
+      <div className="citation-filter">
+        {["all", "inline", "reference"].map(f => (
+          <button key={f} className={`style-option ${filter === f ? "active" : ""}`} onClick={() => setFilter(f)}>
+            {f.charAt(0).toUpperCase() + f.slice(1)}
+          </button>
+        ))}
       </div>
-      {filtered.length === 0 ? (
+
+      {loading && <div className="loading-row">Extracting citations…</div>}
+
+      {!loading && filtered?.length === 0 && (
         <div className="empty-state">
           <div className="empty-state-icon">🔗</div>
-          <div className="empty-state-text">No citations found in this category.</div>
+          <div className="empty-state-title">No citations in this category</div>
         </div>
-      ) : (
+      )}
+
+      {!loading && filtered?.length > 0 && (
         <div className="citation-list">
           {filtered.map((c, i) => (
             <div key={i} className={`citation-item ${c.type}`}>
-              <div className="citation-type">{c.type === "inline" ? "📎 Inline" : "📚 Reference"}</div>
-              {c.text}
+              <div className="citation-type-tag">{c.type}</div>
+              <div className="citation-text">{c.text}</div>
             </div>
           ))}
         </div>
@@ -243,7 +246,7 @@ function CitationsPanel({ paperId }) {
   );
 }
 
-// ── Search Tab ────────────────────────────────────────────
+/* ── Search ──────────────────────────────────────────────── */
 function SearchPanel({ paperId }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -251,48 +254,54 @@ function SearchPanel({ paperId }) {
   const [searched, setSearched] = useState(false);
 
   const search = async () => {
-    if (!query.trim() || loading) return;
+    if (!query.trim()) return;
     setLoading(true);
     setSearched(true);
     try {
       const res = await searchPaper(paperId, query);
       setResults(res.data.results);
-    } catch { setResults([]); }
-    finally { setLoading(false); }
+    } catch {
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="panel-card">
-      <div style={{ fontFamily: "var(--font-display)", fontSize: 18, color: "var(--maroon)", marginBottom: 16 }}>Semantic Search</div>
-      <div className="search-row">
+    <div className="panel-page">
+      <h2 className="panel-heading">Search</h2>
+      <p className="panel-sub">Find the most relevant passages for any concept or keyword.</p>
+
+      <div className="search-bar">
         <input
           className="search-input"
-          placeholder="Search for a concept, term, or phrase…"
+          placeholder="Enter a concept, term, or phrase…"
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === "Enter" && search()}
         />
-        <button className="search-btn" onClick={search} disabled={loading || !query.trim()}>
+        <button className="search-go" onClick={search} disabled={loading || !query.trim()}>
           {loading ? "…" : "Search"}
         </button>
       </div>
 
-      {loading && <div className="empty-state"><LoadingDots /></div>}
+      {loading && <div className="loading-row">Searching…</div>}
 
       {!loading && searched && results.length === 0 && (
         <div className="empty-state">
           <div className="empty-state-icon">🔍</div>
-          <div className="empty-state-text">No strong matches found. Try different keywords.</div>
+          <div className="empty-state-title">No strong matches</div>
+          <div className="empty-state-text">Try different keywords or a broader phrase.</div>
         </div>
       )}
 
       {!loading && results.length > 0 && (
         <div className="search-results">
           {results.map((r, i) => (
-            <div key={i} className="search-result-card">
+            <div key={i} className="search-result">
               <div className="search-result-meta">
-                <span className="search-result-label">Chunk #{r.chunk_index}</span>
-                <span className="search-score-badge">Score: {r.score}</span>
+                <span className="search-result-label">Chunk {r.chunk_index}</span>
+                <span className="search-score">{r.score}</span>
               </div>
               <div className="search-result-text">{r.text}</div>
             </div>
@@ -302,55 +311,62 @@ function SearchPanel({ paperId }) {
 
       {!searched && (
         <div className="empty-state">
-          <div className="empty-state-icon">🔎</div>
-          <div className="empty-state-text">Enter a query to find the most relevant passages in this paper using keyword-overlap similarity.</div>
+          <div className="empty-state-icon">⌕</div>
+          <div className="empty-state-title">Start searching</div>
+          <div className="empty-state-text">Results are ranked by keyword-overlap relevance across all chunks in this paper.</div>
         </div>
       )}
     </div>
   );
 }
 
-// ── Main Workspace ────────────────────────────────────────
+/* ── Main Workspace ──────────────────────────────────────── */
 export default function PaperWorkspace({ paper }) {
   const [tab, setTab] = useState("qa");
 
   return (
-    <div className="workspace">
-      <div className="workspace-header">
-        <div className="workspace-title-row">
-          <span className="workspace-file-icon">📄</span>
-          <div>
-            <div className="workspace-title">{paper.filename}</div>
-            {paper.quick_summary && <div className="quick-summary">"{paper.quick_summary}"</div>}
+    <div className="workspace-page">
+      {/* Top bar */}
+      <div className="workspace-topbar">
+        <div className="workspace-file-info">
+          <div className="workspace-filename">{paper.filename}</div>
+          <div className="workspace-filemeta">
+            <span className="workspace-stat">~{((paper.word_count || 0) / 1000).toFixed(1)}k words</span>
+            <span className="workspace-stat">{paper.chunk_count || 0} chunks</span>
+            <span className="workspace-stat">{paper.equation_count || 0} equations</span>
+            <span className="workspace-stat">{paper.citation_count || 0} citations</span>
           </div>
-        </div>
-        <div className="workspace-stats">
-          {[
-            { icon: "📝", label: `~${((paper.word_count || 0) / 1000).toFixed(1)}k words` },
-            { icon: "🧩", label: `${paper.chunk_count || 0} chunks` },
-            { icon: "∑",  label: `${paper.equation_count || 0} equations` },
-            { icon: "🔗", label: `${paper.citation_count || 0} citations` },
-          ].map(s => (
-            <div key={s.label} className="stat-chip">
-              <span className="stat-chip-icon">{s.icon}</span> {s.label}
-            </div>
-          ))}
         </div>
       </div>
 
-      <div className="tab-bar">
+      {/* Quick summary strip */}
+      {paper.quick_summary && !paper.quick_summary.includes("unavailable") && (
+        <div className="workspace-summary-strip">
+          {paper.quick_summary}
+        </div>
+      )}
+
+      {/* Tabs */}
+      <div className="workspace-tabs">
         {TABS.map(t => (
-          <button key={t.id} className={`tab-btn ${tab === t.id ? "active" : ""}`} onClick={() => setTab(t.id)}>
-            <span className="tab-icon">{t.icon}</span> {t.label}
+          <button
+            key={t.id}
+            className={`workspace-tab ${tab === t.id ? "active" : ""}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
           </button>
         ))}
       </div>
 
-      {tab === "qa"        && <QAPanel paperId={paper.paper_id} />}
-      {tab === "summary"   && <SummaryPanel paperId={paper.paper_id} quickSummary={paper.quick_summary} />}
-      {tab === "equations" && <EquationsPanel paperId={paper.paper_id} />}
-      {tab === "citations" && <CitationsPanel paperId={paper.paper_id} />}
-      {tab === "search"    && <SearchPanel paperId={paper.paper_id} />}
+      {/* Panel */}
+      <div className="workspace-panel">
+        {tab === "qa"        && <QAPanel paperId={paper.paper_id} />}
+        {tab === "summary"   && <SummaryPanel paperId={paper.paper_id} quickSummary={paper.quick_summary} />}
+        {tab === "equations" && <EquationsPanel paperId={paper.paper_id} />}
+        {tab === "citations" && <CitationsPanel paperId={paper.paper_id} />}
+        {tab === "search"    && <SearchPanel paperId={paper.paper_id} />}
+      </div>
     </div>
   );
 }

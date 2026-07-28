@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { usePapers }     from "./hooks/usePapers";
-import Sidebar           from "./components/Sidebar";
-import HomePage          from "./pages/HomePage";
-import WorkspacePage     from "./pages/WorkspacePage";
+import { usePapers } from "./hooks/usePapers";
+import Sidebar from "./components/Sidebar";
+import HomePage from "./pages/HomePage";
+import WorkspacePage from "./pages/WorkspacePage";
 import "./App.css";
 
 export default function App() {
@@ -21,30 +21,30 @@ export default function App() {
 
   return (
     <div className="app-root">
-      <div className="checkered-bg" />
-
-      <header className="app-header">
-        <div className="header-inner">
-          <div className="logo">
-            <span className="logo-icon">🧠</span>
-            <span className="logo-text">
-              PaperSense<span className="logo-accent">AI</span>
-            </span>
+      {/* Top nav */}
+      <nav className="app-nav">
+        <a className="nav-brand" href="/" onClick={e => { e.preventDefault(); setSelectedPaper(null); }}>
+          <div className="nav-brand-mark">🧠</div>
+          <div>
+            <div className="nav-brand-name">PaperSense AI</div>
           </div>
-          <p className="header-tagline">Read Less. Understand More.</p>
-          <div className="header-badge">
-            <span className="badge-dot" />
-            Powered by Groq · Llama 3.3 70B · Free
-          </div>
+        </a>
+        <div className="nav-divider" />
+        <span className="nav-tagline">Read Less. Understand More.</span>
+        <div className="nav-spacer" />
+        <div className="nav-status">
+          <span className="nav-status-dot" />
+          Groq · Llama 3.3 70B · Free
         </div>
-      </header>
+      </nav>
 
       <div className="app-body">
         <Sidebar
           papers={papers}
           selectedId={selectedPaper?.paper_id}
-          onSelect={(p) => setSelectedPaper(p)}
+          onSelect={setSelectedPaper}
           onDelete={handleDelete}
+          onUploadClick={() => setSelectedPaper(null)}
         />
 
         <main className="main-content">
