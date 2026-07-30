@@ -1,6 +1,6 @@
 <div align="center">
 
-# PaperSense AI — Research Paper Intelligence Platform
+# Ponder AI — Research Paper Intelligence Platform
 
 Full-stack AI research assistant featuring **Q&A chat**, **smart summarization**, **equation extraction**, **citation tracing**, and **semantic search** — all powered by a free LLM.
 
