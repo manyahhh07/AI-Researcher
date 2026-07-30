@@ -34,30 +34,45 @@ Built with **Python + FastAPI** and **React 18**, focused on academic paper comp
 
 ## Screenshots
 
-### Homepage — Upload Interface
-![Homepage](screenshots/homepage.png)
+### Research Assistant
 
-### Paper Workspace — Ask AI
-![Ask AI](screenshots/ask-ai.png)
+![Research Assistant](./screenshots/Research-Assistant.png)
 
-### Smart Summary — Concise Style
-![Concise Summary](screenshots/summary-concise.png)
+---
 
-### Smart Summary — Detailed Style
-![Detailed Summary](screenshots/summary-detailed.png)
+### Concise Summary
 
-### Smart Summary — ELI5 Style
-![ELI5 Summary](screenshots/summary-eli5.png)
+![Concise Summary](./screenshots/Concise-Summary.png)
 
-### Equation Extraction
-![Equations](screenshots/equations.png)
+---
 
-### Citation Tracing
-![Citations](screenshots/citations.png)
+### Detailed Summary
 
-### Semantic Search Results
-![Search](screenshots/search.png)
+![Detailed Summary](./screenshots/Detailed-Summary.png)
 
+---
+
+### ELI5 Summary
+
+![ELI5 Summary](./screenshots/ELI5-Summary.png)
+
+---
+
+### Semantic Search
+
+![Semantic Search](./screenshots/Semantic-Search.png)
+
+---
+
+### Equation Extractor
+
+![Equation Extractor](./screenshots/Equation-Extractor.png)
+
+---
+
+### Citation Explorer
+
+![Citation Explorer](./screenshots/Citation-Explorer.png)
 ---
 
 ## Core Modules
