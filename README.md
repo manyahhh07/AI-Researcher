@@ -54,7 +54,7 @@ Built with **Python + FastAPI** and **React 18**, focused on academic paper comp
 
 ### ELI5 Summary
 
-![ELI5 Summary](./screenshots/ELI5-Summary.png)
+![ELI5 Summary](./screenshots/EL15-Summary.png)
 
 ---
 
