@@ -1,152 +1,351 @@
-# 🧠 PaperSense AI
-### *Read Less. Understand More.*
+<div align="center">
 
-> Full-stack AI research paper assistant — upload PDFs, chat with them, summarize, extract equations & citations, and search semantically.
-> **100% FREE AI** powered by Groq + Llama 3.3 70B. No credit card required.
+# PaperSense AI — Research Paper Intelligence Platform
+
+Full-stack AI research assistant featuring **Q&A chat**, **smart summarization**, **equation extraction**, **citation tracing**, and **semantic search** — all powered by a free LLM.
+
+Built with **Python + FastAPI** and **React 18**, focused on academic paper comprehension, knowledge extraction, and AI-assisted research workflows.
+
+![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)
+![Groq](https://img.shields.io/badge/AI-Groq%20%7C%20Llama%203.3%2070B-orange)
+![Free](https://img.shields.io/badge/API-100%25%20Free-success)
+![License](https://img.shields.io/badge/License-MIT-blue)
+
+</div>
 
 ---
 
-## 🎨 Theme
-- **Colors:** Deep maroon `#6B1A2A` × Baby pink `#F7C5D0`
-- **Background:** Subtle checkered pattern
-- **Fonts:** Playfair Display (headings) · Inter (body) · JetBrains Mono (code)
+## Features
+
+* **Q&A Chat** — Ask anything about a paper; answers grounded in actual content via RAG pipeline
+* **Smart Summarization** — Three distinct styles: concise bullets, structured academic report, plain-language ELI5
+* **Equation Extraction** — Automatically surfaces all mathematical expressions and LaTeX from PDFs
+* **Citation Tracing** — Extracts inline citations and full reference lists with type classification
+* **Semantic Search** — Finds the most relevant passages for any concept, term, or keyword
+* **Auto Quick-Summary** — 2-sentence plain-language overview generated on every upload
+* **Multi-Paper Library** — Upload and switch between multiple papers in one session
+* **Input Validation** — Handles non-PDF uploads, corrupt files, missing API keys, and backend errors
+* **Responsive Dashboard UI** — Clean SaaS-style interface with real-time AI feedback
+* **100% Free AI** — Powered by Groq Cloud + Llama 3.3 70B, no credit card required
 
 ---
 
-## 📁 Complete Project Structure
+## Screenshots
 
+### Homepage — Upload Interface
+![Homepage](screenshots/homepage.png)
+
+### Paper Workspace — Ask AI
+![Ask AI](screenshots/ask-ai.png)
+
+### Smart Summary — Concise Style
+![Concise Summary](screenshots/summary-concise.png)
+
+### Smart Summary — Detailed Style
+![Detailed Summary](screenshots/summary-detailed.png)
+
+### Smart Summary — ELI5 Style
+![ELI5 Summary](screenshots/summary-eli5.png)
+
+### Equation Extraction
+![Equations](screenshots/equations.png)
+
+### Citation Tracing
+![Citations](screenshots/citations.png)
+
+### Semantic Search Results
+![Search](screenshots/search.png)
+
+---
+
+## Core Modules
+
+### Q&A Chat
+
+Features:
+
+* Context-grounded answers via RAG pipeline
+* Top-4 most relevant chunk retrieval per question
+* Source chunk attribution shown per answer
+* Full chat history within session
+* Typing indicator during AI generation
+
+---
+
+### Smart Summarization
+
+Three fully distinct output styles:
+
+* **Concise** — Exactly 5 bullet points: Objective · Methods · Key Findings · Conclusions · Implications
+* **Detailed** — Structured academic report with sections: Overview · Methodology · Key Findings · Limitations · Future Work
+* **ELI5** — 3 plain-language paragraphs for a curious 15-year-old, no jargon, real-world analogies
+
+Auto-summary also generated on every upload.
+
+---
+
+### Equation Extraction
+
+Detects:
+
+* Inline LaTeX expressions `$...$`
+* Display math blocks `$$...$$`
+* LaTeX equation environments
+* Plain-text mathematical expressions
+* Up to 30 unique equations per paper
+
+---
+
+### Citation Tracing
+
+Extracts:
+
+* Inline numbered citations `[1]`, `[2]`
+* Author-year citations `(Smith, 2020)`
+* Full reference list entries
+* Inline vs. reference type classification
+* Up to 50 citations per paper
+
+---
+
+### Semantic Search
+
+Provides:
+
+* Keyword-overlap cosine similarity ranking
+* Top-5 most relevant passage retrieval
+* Chunk index and relevance score per result
+* Full passage preview per result
+
+---
+
+## Full Processing Pipeline
+
+```text
+PDF Upload
+      ↓
+File Validation (PDF check, size guard)
+      ↓
+PyMuPDF Text + Metadata Extraction
+      ↓
+Overlapping Chunk Splitting (1500 words, 200-word overlap)
+      ↓
+Equation Extraction (regex: LaTeX + plain math)
+      ↓
+Citation Extraction (regex: numbered + author-year + reference list)
+      ↓
+Groq Quick-Summary (Llama 3.3 70B)
+      ↓
+Paper stored in memory — ready for Q&A, Search, Analysis
 ```
-papersense-ai/
-│
-├── .env.example                   ← Copy → backend/.env, add GROQ_API_KEY
-├── start.sh                       ← One-command launcher (both services)
-├── README.md                      ← You are here
-│
-├── 📂 backend/
-│   ├── main.py                    ← FastAPI app: 8 routes, PDF processing, Groq AI
-│   ├── requirements.txt           ← FastAPI, PyMuPDF, openai (for Groq compat)
-│   ├── .env.example               ← Backend env template
-│   └── README.md                  ← Backend-specific docs + upgrade path
-│
-└── 📂 frontend/
-    ├── package.json               ← React 18 deps + proxy config
-    ├── public/
-    │   └── index.html             ← HTML shell
-    └── src/
-        ├── index.js               ← ReactDOM entry point
-        ├── App.js                 ← Root layout, routing, state orchestration
-        ├── App.css                ← Full design system (tokens, all component styles)
-        │
-        ├── 📂 pages/              ← Page-level route components
-        │   ├── HomePage.js        ← Landing page (wraps UploadZone)
-        │   └── WorkspacePage.js   ← Paper workspace page (wraps PaperWorkspace)
-        │
-        ├── 📂 components/         ← Reusable UI components
-        │   ├── Sidebar.js         ← Left rail: paper list + tech stack card
-        │   ├── UploadZone.js      ← Drag-and-drop PDF uploader + feature grid
-        │   └── PaperWorkspace.js  ← 5-tab workspace (Q&A, Summary, Eq, Cit, Search)
-        │
-        ├── 📂 hooks/              ← Custom React hooks
-        │   ├── useApi.js          ← Generic async API hook (loading/error/data)
-        │   └── usePapers.js       ← Paper list state (fetch, add, remove)
-        │
-        └── 📂 utils/
-            └── api.js             ← Axios wrappers for all 8 backend endpoints
-```
 
 ---
 
-## 🚀 Quick Start
+## Tech Stack
 
-### Step 1 — Get your FREE Groq API key
-1. Go to **https://console.groq.com**
-2. Sign up with Google/GitHub (no credit card)
-3. Click **API Keys → Create API Key**
-4. Copy your key (starts with `gsk_...`)
+| Layer        | Technology                  |
+|--------------|-----------------------------|
+| Backend      | Python 3.8+                 |
+| Framework    | FastAPI 0.111               |
+| AI Provider  | Groq Cloud (free)           |
+| AI Model     | Llama 3.3 70B Versatile     |
+| PDF Parsing  | PyMuPDF (fitz)              |
+| Env Config   | python-dotenv               |
+| Server       | Uvicorn (ASGI)              |
+| Frontend     | React 18                    |
+| HTTP Client  | Axios                       |
+| File Upload  | react-dropzone              |
+| Fonts        | Inter + Fraunces (Google)   |
+| Architecture | Modular RAG pipeline        |
 
-### Step 2 — Run with one command
+---
+
+## Project Structure
+
 ```bash
-git clone https://github.com/you/papersense-ai
+papersense-ai/
+├── start.sh                         ← One-command launcher (both services)
+├── README.md
+├── .env.example
+│
+├── backend/
+│   ├── main.py                      ← FastAPI: 8 REST routes, PDF processing, Groq AI
+│   ├── requirements.txt             ← Python dependencies
+│   ├── .env.example                 ← API key template
+│   └── README.md                    ← Backend docs + upgrade path
+│
+└── frontend/
+    ├── package.json                 ← React 18 deps + proxy config
+    ├── public/
+    │   └── index.html
+    └── src/
+        ├── App.js                   ← Root layout, routing, state orchestration
+        ├── App.css                  ← Full design system (tokens, all components)
+        ├── index.js                 ← ReactDOM entry point
+        ├── components/
+        │   ├── Sidebar.js           ← Navigation panel + paper library
+        │   ├── UploadZone.js        ← Drag-and-drop PDF uploader
+        │   └── PaperWorkspace.js    ← 5-tab analysis workspace
+        ├── hooks/
+        │   ├── useApi.js            ← Generic async API hook (loading/error/data)
+        │   └── usePapers.js         ← Paper list state management
+        ├── pages/
+        │   ├── HomePage.js          ← Landing + upload page
+        │   └── WorkspacePage.js     ← Paper analysis page
+        └── utils/
+            └── api.js               ← Axios wrappers for all 8 endpoints
+```
+
+---
+
+## API Endpoints
+
+| Method   | Endpoint              | Description                           |
+|----------|-----------------------|---------------------------------------|
+| `POST`   | `/upload`             | Upload and process a PDF              |
+| `GET`    | `/papers`             | List all uploaded papers              |
+| `POST`   | `/ask`                | Ask AI a question about a paper       |
+| `POST`   | `/summarize`          | Summarize (concise / detailed / eli5) |
+| `GET`    | `/equations/{id}`     | Extract equations from a paper        |
+| `GET`    | `/citations/{id}`     | Extract citations from a paper        |
+| `POST`   | `/search`             | Semantic keyword search               |
+| `DELETE` | `/papers/{id}`        | Delete a paper from memory            |
+
+Swagger UI auto-generated at `http://localhost:8000/docs`
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+* Python 3.8+
+* Node.js 18+
+* pip
+* Free Groq API key → [console.groq.com](https://console.groq.com) *(no credit card)*
+
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/papersense-ai.git
+
+# 2. Enter project directory
 cd papersense-ai
 
-# Add your key
-cp .env.example backend/.env
-# Edit backend/.env → set GROQ_API_KEY=gsk_...
+# 3. Create backend/.env with your free Groq key
+#    File content:  GROQ_API_KEY=gsk_your_key_here
 
-# Launch both services
+# 4. Install backend dependencies
+cd backend
+pip install -r requirements.txt
+
+# 5. Install frontend dependencies
+cd ../frontend
+npm install
+```
+
+---
+
+## Run Application
+
+### Option A — One command
+
+```bash
 bash start.sh
 ```
 
-### Or run manually
+### Option B — Two terminals
+
 ```bash
 # Terminal 1 — Backend
 cd backend
-pip install -r requirements.txt
-export GROQ_API_KEY=gsk_YOUR_KEY_HERE
 python main.py
-# → http://localhost:8000
-# → http://localhost:8000/docs (Swagger UI)
+# → API at http://localhost:8000
+# → Swagger at http://localhost:8000/docs
 
 # Terminal 2 — Frontend
 cd frontend
-npm install
 npm start
-# → http://localhost:3000
+# → App at http://localhost:3000
 ```
 
 ---
 
-## 🤖 Free AI — Groq + Llama 3.3 70B
+## Free AI — Groq + Llama 3.3 70B
 
-| Property | Value |
-|---|---|
-| Provider | Groq Cloud |
-| Model | `llama-3.3-70b-versatile` |
-| Free daily limit | **14,400 requests/day** |
-| Speed | 300–800 tokens/second |
-| Credit card | ❌ Not required |
-| API format | OpenAI-compatible |
-| Sign up | https://console.groq.com |
+| Property         | Value                        |
+|------------------|------------------------------|
+| Provider         | Groq Cloud                   |
+| Model            | `llama-3.3-70b-versatile`    |
+| Free daily limit | 14,400 requests / day        |
+| Speed            | 300–800 tokens / second      |
+| Credit card      | Not required                 |
+| Sign up          | https://console.groq.com     |
 
-The backend uses the `openai` Python SDK pointed at `https://api.groq.com/openai/v1` — so swapping to a paid provider (OpenAI, Anthropic) in the future is a 2-line change.
-
----
-
-## 🌐 API Reference
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/upload` | Upload & process a PDF |
-| `GET` | `/papers` | List all uploaded papers |
-| `POST` | `/ask` | Ask AI a question about a paper |
-| `POST` | `/summarize` | Summarize (concise / detailed / eli5) |
-| `GET` | `/equations/{id}` | Extract equations |
-| `GET` | `/citations/{id}` | Extract citations |
-| `POST` | `/search` | Keyword semantic search |
-| `DELETE` | `/papers/{id}` | Delete a paper |
+Swapping to a paid provider (OpenAI, Anthropic) is a 2-line change — the backend uses the OpenAI-compatible SDK interface.
 
 ---
 
-## 🏗️ Architecture
+## Technical Highlights
 
-```
-PDF Upload → PyMuPDF (text extract) → Chunker (1500w overlap)
-                                    → Equation extractor (regex)
-                                    → Citation extractor (regex)
-                                    → Groq quick-summary
+### RAG Pipeline
 
-User Question → Cosine keyword search → Top-4 chunks
-                                      → Groq (context-grounded answer)
-```
+Chunks each uploaded PDF into 1500-word overlapping segments, scores them against the user's query via cosine keyword similarity, and feeds the top-4 chunks to Llama 3.3 70B for context-grounded answers.
+
+### Distinct Summarization Styles
+
+Each style uses a different prompt structure — concise outputs strict bullet points, detailed outputs structured academic sections, ELI5 outputs conversational prose. The model is instructed explicitly on format, not just tone.
+
+### Zero External Vector DB
+
+Semantic search runs entirely on in-memory keyword similarity — no ChromaDB or Pinecone needed for the MVP. Drop-in replaceable with real embeddings for production.
+
+### Validation Layer
+
+Prevents non-PDF uploads, missing API key crashes, malformed paper ID requests, and empty document processing — all errors surface cleanly in the UI.
 
 ---
 
-## 🔮 Production Upgrade Path
+## Concepts Demonstrated
 
-| Current (Free MVP) | Production |
-|---|---|
-| In-memory dict | ChromaDB / Pinecone vector store |
-| Keyword similarity | Real embeddings (sentence-transformers) |
-| Groq free tier | Groq paid / OpenAI / Anthropic |
-| Single process | Gunicorn + workers |
-| No auth | JWT auth + user sessions |
+* Retrieval-Augmented Generation (RAG)
+* Large Language Model Integration
+* Prompt Engineering (style-specific output formatting)
+* PDF Text Extraction and Processing
+* Overlapping Chunk Splitting Strategy
+* Cosine Similarity Semantic Search
+* Async FastAPI Backend Engineering
+* Modular React Component Architecture
+* Custom React Hook Design Patterns
+* REST API Design with Pydantic Validation
+* Full-Stack AI Application Development
+
+---
+
+## Future Improvements
+
+* ChromaDB / Pinecone vector store with real embeddings
+* Multi-paper cross-reference Q&A
+* LangChain RAG pipeline integration
+* Ollama local LLM support (offline mode)
+* Exportable PDF summary reports
+* User authentication + persistent paper library
+* Docker deployment
+* OS fingerprinting + CVE lookup for security research papers
+
+---
+
+## Legal Disclaimer
+
+Only upload papers you own, have authored, or have explicit rights to process.
+
+Respect copyright and institutional data policies when using this tool with proprietary or licensed research.
+
+---
+
+## License
+
+MIT © Manya Singh
