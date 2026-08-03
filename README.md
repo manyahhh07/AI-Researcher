@@ -1,17 +1,17 @@
 <div align="center">
 
-# SignBridge AI — Real-Time Sign Language Communication Platform
+# Ponder AI — Research Paper Intelligence Platform
 
-Full-stack accessibility platform featuring **live sign-to-text translation**, **text-to-sign animation**, **speech-to-sign**, **sign-to-speech**, and **two-person conversation mode** — all running on a self-hosted ML pipeline.
+Full-stack AI research assistant featuring **Q&A chat**, **smart summarization**, **equation extraction**, **citation tracing**, and **semantic search** — all powered by a free LLM.
 
-Built with **Python + FastAPI** and **React 18 + TypeScript**, focused on real-time temporal gesture recognition, accessible UI design, and end-to-end assistive communication workflows.
+Built with **Python + FastAPI** and **React 18**, focused on academic paper comprehension, knowledge extraction, and AI-assisted research workflows.
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)
-![PyTorch](https://img.shields.io/badge/ML-PyTorch%20%7C%20BiLSTM-EE4C2C?logo=pytorch)
-![MediaPipe](https://img.shields.io/badge/CV-MediaPipe%20Holistic-orange)
-![License](https://img.shields.io/badge/License-Unspecified-lightgrey)
+![Groq](https://img.shields.io/badge/AI-Groq%20%7C%20Llama%203.3%2070B-orange)
+![Free](https://img.shields.io/badge/API-100%25%20Free-success)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
 </div>
 
@@ -19,188 +19,214 @@ Built with **Python + FastAPI** and **React 18 + TypeScript**, focused on real-t
 
 ## Features
 
-* **Live Sign → Text** — Continuous webcam-based gesture recognition; answers grounded in a real 45-frame temporal window, not per-frame guessing
-* **Smart Sentence Building** — Punctuation, capitalization, and repeated-word suppression applied automatically to recognized glosses
-* **Text → Sign** — Type a phrase, watch it signed by an animated 3D skeletal hand via Three.js
-* **Speech → Sign** — Browser speech recognition feeds directly into the same sign animation pipeline
-* **Sign → Speech** — Recognized sentences are read aloud via text-to-speech
-* **Conversation Mode** — Split-screen: one person signs, the other speaks, both sides translated live into a shared transcript
-* **Confidence Gating** — Predictions below threshold are suppressed rather than shown, and idle/no-hand frames never trigger false positives
-* **Accessibility Built-In** — Dark mode, high contrast, large text, keyboard shortcuts
-* **Input Validation** — Handles malformed frames, empty audio uploads, missing TTS engine, and WebSocket protocol errors cleanly
-* **Responsive Dashboard UI** — Clean, minimal, neutral-toned interface with live status indicators
-* **Self-Hosted AI** — No external API keys or paid inference required; MediaPipe, PyTorch, Whisper, and espeak-ng all run locally
+* **Q&A Chat** — Ask anything about a paper; answers grounded in actual content via RAG pipeline
+* **Smart Summarization** — Three distinct styles: concise bullets, structured academic report, plain-language ELI5
+* **Equation Extraction** — Automatically surfaces all mathematical expressions and LaTeX from PDFs
+* **Citation Tracing** — Extracts inline citations and full reference lists with type classification
+* **Semantic Search** — Finds the most relevant passages for any concept, term, or keyword
+* **Auto Quick-Summary** — 2-sentence plain-language overview generated on every upload
+* **Multi-Paper Library** — Upload and switch between multiple papers in one session
+* **Input Validation** — Handles non-PDF uploads, corrupt files, missing API keys, and backend errors
+* **Responsive Dashboard UI** — Clean SaaS-style interface with real-time AI feedback
+* **100% Free AI** — Powered by Groq Cloud + Llama 3.3 70B, no credit card required
 
+---
+
+## Screenshots
+
+### Research Assistant
+
+![Research Assistant](./screenshots/Research-Assistant.png)
+
+---
+
+### Concise Summary
+
+![Concise Summary](./screenshots/Concise-Summary.png)
+
+---
+
+### Detailed Summary
+
+![Detailed Summary](./screenshots/Detailed-Summary.png)
+
+---
+
+### ELI5 Summary
+
+![ELI5 Summary](./screenshots/EL15-Summary.png)
+
+---
+
+### Semantic Search
+
+![Semantic Search](./screenshots/Semantic-Search.png)
+
+---
+
+### Equation Extractor
+
+![Equation Extractor](./screenshots/Equation-Extractor.png)
+
+---
+
+### Citation Explorer
+
+![Citation Explorer](./screenshots/Citation-Explorer.png)
 ---
 
 ## Core Modules
 
-### Live Sign → Text
+### Q&A Chat
 
 Features:
 
-* Server-side MediaPipe Holistic landmark extraction (pose + both hands + face)
-* Rolling 45-frame temporal buffer per connection, not single-frame classification
-* Idle-gating — requires ≥30% of buffered frames to have a visible hand before predicting
-* Bidirectional LSTM recognition model with confidence-gated output
-* Live buffer progress and confidence meter streamed to the UI
+* Context-grounded answers via RAG pipeline
+* Top-4 most relevant chunk retrieval per question
+* Source chunk attribution shown per answer
+* Full chat history within session
+* Typing indicator during AI generation
 
 ---
 
-### Smart Sentence Builder
+### Smart Summarization
 
-Turns a raw stream of recognized glosses into clean, readable output:
+Three fully distinct output styles:
 
-* **Repeat suppression** — consecutive identical glosses collapse into one word
-* **Capitalization** — first letter of the sentence capitalized automatically
-* **Punctuation** — sentence-ending punctuation inferred from context words
-* **Flush on demand** — `end_sentence` message returns the finished sentence and resets the buffer
+* **Concise** — Exactly 5 bullet points: Objective · Methods · Key Findings · Conclusions · Implications
+* **Detailed** — Structured academic report with sections: Overview · Methodology · Key Findings · Limitations · Future Work
+* **ELI5** — 3 plain-language paragraphs for a curious 15-year-old, no jargon, real-world analogies
 
----
-
-### Text → Sign / Speech → Sign
-
-Detects and animates:
-
-* Word-by-word playback through a local gesture keyframe library
-* Real-time pose interpolation rendered as a skeletal hand (joints + bones) in Three.js
-* Same animation pipeline shared by both the Text-to-Sign page and Conversation Mode
-* Graceful fallback to a generic gesture for out-of-vocabulary words
+Auto-summary also generated on every upload.
 
 ---
 
-### Sign → Speech
+### Equation Extraction
+
+Detects:
+
+* Inline LaTeX expressions `$...$`
+* Display math blocks `$$...$$`
+* LaTeX equation environments
+* Plain-text mathematical expressions
+* Up to 30 unique equations per paper
+
+---
+
+### Citation Tracing
+
+Extracts:
+
+* Inline numbered citations `[1]`, `[2]`
+* Author-year citations `(Smith, 2020)`
+* Full reference list entries
+* Inline vs. reference type classification
+* Up to 50 citations per paper
+
+---
+
+### Semantic Search
 
 Provides:
 
-* Backend `POST /api/v1/speech/text-to-speech` synthesis via espeak-ng
-* Valid WAV audio returned directly over HTTP
-* Clear `503` error if the TTS engine isn't installed, instead of a silent failure
-
----
-
-### Conversation Mode
-
-* Left pane: live webcam feed + sign recognition (Person A)
-* Right pane: live speech transcription + sign playback (Person B)
-* Shared, live-updating chat transcript combining both directions
+* Keyword-overlap cosine similarity ranking
+* Top-5 most relevant passage retrieval
+* Chunk index and relevance score per result
+* Full passage preview per result
 
 ---
 
 ## Full Processing Pipeline
 
 ```text
-Webcam Frame (frontend, ~150ms interval)
+PDF Upload
       ↓
-Base64 JPEG over WebSocket (/ws/translate)
+File Validation (PDF check, size guard)
       ↓
-MediaPipe Holistic Landmark Extraction (1629-dim vector)
+PyMuPDF Text + Metadata Extraction
       ↓
-Rolling 45-Frame Sequence Buffer + Idle-Gating
+Overlapping Chunk Splitting (1500 words, 200-word overlap)
       ↓
-Bidirectional LSTM Inference (SignLSTM)
+Equation Extraction (regex: LaTeX + plain math)
       ↓
-Confidence Threshold Gate
+Citation Extraction (regex: numbered + author-year + reference list)
       ↓
-Sentence Builder (dedup, punctuation, capitalization)
+Groq Quick-Summary (Llama 3.3 70B)
       ↓
-Live prediction streamed back to frontend — sentence rendered in real time
+Paper stored in memory — ready for Q&A, Search, Analysis
 ```
 
 ---
 
 ## Tech Stack
 
-| Layer          | Technology                        |
-|----------------|------------------------------------|
-| Backend        | Python 3.11+                       |
-| Framework      | FastAPI + WebSockets                |
-| Computer Vision| MediaPipe Holistic                  |
-| ML Model       | PyTorch — Bidirectional LSTM        |
-| Speech-to-Text | OpenAI Whisper                      |
-| Text-to-Speech | espeak-ng                           |
-| Frontend       | React 18 + TypeScript               |
-| 3D Rendering   | Three.js                            |
-| Styling        | Tailwind CSS                        |
-| Build Tool     | Vite                                |
-| Architecture   | Modular temporal-recognition pipeline |
+| Layer        | Technology                  |
+|--------------|-----------------------------|
+| Backend      | Python 3.8+                 |
+| Framework    | FastAPI 0.111               |
+| AI Provider  | Groq Cloud (free)           |
+| AI Model     | Llama 3.3 70B Versatile     |
+| PDF Parsing  | PyMuPDF (fitz)              |
+| Env Config   | python-dotenv               |
+| Server       | Uvicorn (ASGI)              |
+| Frontend     | React 18                    |
+| HTTP Client  | Axios                       |
+| File Upload  | react-dropzone              |
+| Fonts        | Inter + Fraunces (Google)   |
+| Architecture | Modular RAG pipeline        |
 
 ---
 
 ## Project Structure
 
 ```bash
-signbridge-ai/
-├── docker-compose.yml                ← One-command launcher (both services)
+papersense-ai/
+├── start.sh                         ← One-command launcher (both services)
 ├── README.md
-├── .gitignore
+├── .env.example
 │
 ├── backend/
-│   ├── requirements.txt              ← Python dependencies
-│   ├── .env.example                  ← Config template
-│   ├── Dockerfile
-│   └── app/
-│       ├── main.py                   ← FastAPI entrypoint, router wiring
-│       ├── api/
-│       │   ├── routes_translate.py   ← /status, text-to-sign (stub)
-│       │   ├── routes_ws.py          ← /ws/translate — full live pipeline
-│       │   └── routes_speech.py      ← speech-to-text, text-to-speech
-│       ├── core/
-│       │   ├── config.py             ← env-based settings
-│       │   └── logger.py
-│       ├── ml/
-│       │   ├── landmark_extractor.py ← MediaPipe Holistic wrapper
-│       │   ├── sequence_buffer.py    ← rolling window + idle-gating
-│       │   ├── model_loader.py       ← SignLSTM definition + checkpoint loading
-│       │   ├── sign_recognizer.py    ← inference + confidence gating
-│       │   └── sentence_builder.py   ← punctuation / dedup / capitalization
-│       └── speech/
-│           ├── stt.py                ← Whisper wrapper
-│           └── tts.py                ← espeak-ng wrapper
+│   ├── main.py                      ← FastAPI: 8 REST routes, PDF processing, Groq AI
+│   ├── requirements.txt             ← Python dependencies
+│   ├── .env.example                 ← API key template
+│   └── README.md                    ← Backend docs + upgrade path
 │
-├── frontend/
-│   ├── package.json                  ← React 18 + TS deps
-│   ├── Dockerfile
-│   └── src/
-│       ├── App.tsx                   ← Routing, root layout
-│       ├── main.tsx                  ← ReactDOM entry point
-│       ├── components/
-│       │   ├── webcam/WebcamFeed.tsx
-│       │   ├── avatar/SignAvatar3D.tsx   ← Three.js skeletal hand
-│       │   ├── translation/ConfidenceMeter.tsx
-│       │   ├── layout/Navbar.tsx, ThemeToggle.tsx
-│       │   └── ui/StatusPill.tsx
-│       ├── hooks/
-│       │   ├── useWebcam.ts
-│       │   ├── useWebSocket.ts
-│       │   └── useSpeechRecognition.ts
-│       ├── pages/
-│       │   ├── Dashboard.tsx
-│       │   ├── LiveTranslate.tsx
-│       │   ├── TextToSign.tsx
-│       │   ├── Conversation.tsx
-│       │   └── Settings.tsx
-│       ├── data/gestureLibrary.ts    ← demo pose keyframes
-│       ├── services/api.ts, env.ts
-│       └── types/translation.ts
-│
-├── models/sign_recognition/          ← train.py, model_def.py, checkpoints/
-├── datasets/loaders/                 ← base_loader, wlasl_loader, synthetic_loader
-├── animations/gesture_library/       ← gesture data notes (real data not yet included)
-└── docs/                             ← architecture, API reference, setup guides, roadmap
+└── frontend/
+    ├── package.json                 ← React 18 deps + proxy config
+    ├── public/
+    │   └── index.html
+    └── src/
+        ├── App.js                   ← Root layout, routing, state orchestration
+        ├── App.css                  ← Full design system (tokens, all components)
+        ├── index.js                 ← ReactDOM entry point
+        ├── components/
+        │   ├── Sidebar.js           ← Navigation panel + paper library
+        │   ├── UploadZone.js        ← Drag-and-drop PDF uploader
+        │   └── PaperWorkspace.js    ← 5-tab analysis workspace
+        ├── hooks/
+        │   ├── useApi.js            ← Generic async API hook (loading/error/data)
+        │   └── usePapers.js         ← Paper list state management
+        ├── pages/
+        │   ├── HomePage.js          ← Landing + upload page
+        │   └── WorkspacePage.js     ← Paper analysis page
+        └── utils/
+            └── api.js               ← Axios wrappers for all 8 endpoints
 ```
 
 ---
 
 ## API Endpoints
 
-| Method      | Endpoint                          | Description                              |
-|-------------|------------------------------------|-------------------------------------------|
-| `GET`       | `/api/v1/status`                   | Health/liveness check                     |
-| `POST`      | `/api/v1/translate/text-to-sign`   | Server-side text-to-sign (not yet implemented, returns `501`) |
-| `WS`        | `/ws/translate`                    | Live webcam frame streaming + recognition |
-| `POST`      | `/api/v1/speech/text-to-speech`    | Synthesize speech from text               |
-| `POST`      | `/api/v1/speech/speech-to-text`    | Transcribe uploaded audio                 |
+| Method   | Endpoint              | Description                           |
+|----------|-----------------------|---------------------------------------|
+| `POST`   | `/upload`             | Upload and process a PDF              |
+| `GET`    | `/papers`             | List all uploaded papers              |
+| `POST`   | `/ask`                | Ask AI a question about a paper       |
+| `POST`   | `/summarize`          | Summarize (concise / detailed / eli5) |
+| `GET`    | `/equations/{id}`     | Extract equations from a paper        |
+| `GET`    | `/citations/{id}`     | Extract citations from a paper        |
+| `POST`   | `/search`             | Semantic keyword search               |
+| `DELETE` | `/papers/{id}`        | Delete a paper from memory            |
 
 Swagger UI auto-generated at `http://localhost:8000/docs`
 
@@ -210,41 +236,40 @@ Swagger UI auto-generated at `http://localhost:8000/docs`
 
 ### Prerequisites
 
-* Python 3.11+
-* Node.js 20+
-* `ffmpeg` (required by Whisper)
-* `espeak-ng` (required by text-to-speech)
-* A webcam and microphone, for the live features
+* Python 3.8+
+* Node.js 18+
+* pip
+* Free Groq API key → [console.groq.com](https://console.groq.com) *(no credit card)*
 
 ### Installation
 
 ```bash
-# 1. Unzip / clone the project
-cd signbridge-ai
+# 1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/papersense-ai.git
 
-# 2. Backend setup
+# 2. Enter project directory
+cd papersense-ai
+
+# 3. Create backend/.env with your free Groq key
+#    File content:  GROQ_API_KEY=gsk_your_key_here
+
+# 4. Install backend dependencies
 cd backend
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env
 
-# 3. Frontend setup
+# 5. Install frontend dependencies
 cd ../frontend
 npm install
-cp .env.example .env
 ```
 
 ---
 
 ## Run Application
 
-### Option A — Docker (one command)
+### Option A — One command
 
 ```bash
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
-docker compose up --build
+bash start.sh
 ```
 
 ### Option B — Two terminals
@@ -252,110 +277,90 @@ docker compose up --build
 ```bash
 # Terminal 1 — Backend
 cd backend
-uvicorn app.main:app --reload --port 8000
+python main.py
 # → API at http://localhost:8000
 # → Swagger at http://localhost:8000/docs
 
 # Terminal 2 — Frontend
 cd frontend
-npm run dev
-# → App at http://localhost:5173
+npm start
+# → App at http://localhost:3000
 ```
 
 ---
 
-## Self-Hosted AI — No External API Required
+## Free AI — Groq + Llama 3.3 70B
 
-| Property           | Value                                  |
-|--------------------|------------------------------------------|
-| Recognition model  | Bidirectional LSTM (PyTorch, self-trained) |
-| Landmark extraction| MediaPipe Holistic (local, offline)       |
-| Speech-to-text     | OpenAI Whisper (local, downloads weights once) |
-| Text-to-speech     | espeak-ng (fully offline)                 |
-| API keys required  | None                                      |
-| Cost               | Free — all inference runs on your own machine |
+| Property         | Value                        |
+|------------------|------------------------------|
+| Provider         | Groq Cloud                   |
+| Model            | `llama-3.3-70b-versatile`    |
+| Free daily limit | 14,400 requests / day        |
+| Speed            | 300–800 tokens / second      |
+| Credit card      | Not required                 |
+| Sign up          | https://console.groq.com     |
 
-Swapping to a hosted STT/TTS provider (e.g. a cloud Whisper API or a
-premium TTS voice) is a contained change inside `app/speech/` — the rest
-of the pipeline doesn't need to know the difference.
+Swapping to a paid provider (OpenAI, Anthropic) is a 2-line change — the backend uses the OpenAI-compatible SDK interface.
 
 ---
 
 ## Technical Highlights
 
-### Temporal Recognition Pipeline
+### RAG Pipeline
 
-Buffers 45 consecutive frames of MediaPipe landmarks per connection and
-gates prediction on whether the window actually contains signing motion
-(idle-frame ratio check) before running inference — avoiding the
-flickering, frame-by-frame misclassification that a naive per-frame
-classifier produces.
+Chunks each uploaded PDF into 1500-word overlapping segments, scores them against the user's query via cosine keyword similarity, and feeds the top-4 chunks to Llama 3.3 70B for context-grounded answers.
 
-### Shared Animation Engine
+### Distinct Summarization Styles
 
-Text-to-Sign and Speech-to-Sign both drive the exact same
-`SignAvatar3D` component and gesture-interpolation logic — one animation
-pipeline, two input sources.
+Each style uses a different prompt structure — concise outputs strict bullet points, detailed outputs structured academic sections, ELI5 outputs conversational prose. The model is instructed explicitly on format, not just tone.
 
-### Zero External Vector DB / Inference API
+### Zero External Vector DB
 
-Everything — landmark extraction, sign recognition, speech-to-text, and
-text-to-speech — runs as a local process. No hosted inference API, no
-per-request cost, no API key management.
+Semantic search runs entirely on in-memory keyword similarity — no ChromaDB or Pinecone needed for the MVP. Drop-in replaceable with real embeddings for production.
 
 ### Validation Layer
 
-Prevents malformed WebSocket frames, empty audio uploads, missing TTS
-binaries, and unknown message types from crashing the connection — every
-failure path returns a structured error message instead of dropping the
-socket silently.
+Prevents non-PDF uploads, missing API key crashes, malformed paper ID requests, and empty document processing — all errors surface cleanly in the UI.
 
 ---
 
 ## Concepts Demonstrated
 
-* Real-time temporal sequence modeling (Bidirectional LSTM)
-* Computer vision landmark extraction (MediaPipe Holistic)
-* WebSocket-based streaming inference architecture
-* Per-connection stateful buffering vs. shared stateless inference
-* 3D skeletal animation and pose interpolation (Three.js)
-* Browser-native speech recognition integration (Web Speech API)
-* Async FastAPI backend engineering
-* Modular React + TypeScript component architecture
-* Custom React hook design patterns
-* REST + WebSocket API design with Pydantic validation
-* Full-stack accessibility-focused application development
+* Retrieval-Augmented Generation (RAG)
+* Large Language Model Integration
+* Prompt Engineering (style-specific output formatting)
+* PDF Text Extraction and Processing
+* Overlapping Chunk Splitting Strategy
+* Cosine Similarity Semantic Search
+* Async FastAPI Backend Engineering
+* Modular React Component Architecture
+* Custom React Hook Design Patterns
+* REST API Design with Pydantic Validation
+* Full-Stack AI Application Development
 
 ---
 
 ## Future Improvements
 
-* Train the recognition model on a real dataset (WLASL) — currently ships untrained
-* Real motion-capture gesture library — currently a small hand-authored placeholder vocabulary
-* Server-authored `/translate/text-to-sign` endpoint (currently client-side only)
-* Validation split + real accuracy metrics for the trained model
-* Transformer-based recognition architecture
-* Multi-language support beyond English
-* Conversation history persistence across sessions
-* CI test suite
-
-Full roadmap: [`docs/FUTURE_IMPROVEMENTS.md`](docs/FUTURE_IMPROVEMENTS.md)
+* ChromaDB / Pinecone vector store with real embeddings
+* Multi-paper cross-reference Q&A
+* LangChain RAG pipeline integration
+* Ollama local LLM support (offline mode)
+* Exportable PDF summary reports
+* User authentication + persistent paper library
+* Docker deployment
+* OS fingerprinting + CVE lookup for security research papers
 
 ---
 
-## Status Disclaimer
+## Legal Disclaimer
 
-The backend runs on an **untrained** recognition model by default — the
-full pipeline works end-to-end, but predictions are not meaningful until
-`models/sign_recognition/train.py` is run against a real dataset. The
-gesture animation vocabulary is a small, hand-authored placeholder, not
-linguistically accurate ASL. See
-[`docs/MODEL_TRAINING.md`](docs/MODEL_TRAINING.md) and
-[`animations/gesture_library/README.md`](animations/gesture_library/README.md)
-for details.
+Only upload papers you own, have authored, or have explicit rights to process.
+
+Respect copyright and institutional data policies when using this tool with proprietary or licensed research.
 
 ---
 
 ## License
 
-Not yet specified.
+MIT © Manya Singh
